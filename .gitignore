@@ -5,7 +5,7 @@
 *.tfstate
 *.tfstate.*
 *.tfplan
-
+app-config/
 # Crash log files
 crash.log
 

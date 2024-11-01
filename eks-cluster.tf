@@ -55,3 +55,58 @@ module "eks" {
     }
   }
 }
+
+#### add on for CSI EBS
+
+resource "aws_iam_policy" "ebs_csi_policy" {
+  name        = "AmazonEBSCSIDriverPolicy"
+  description = "Policy to allow EBS CSI driver to manage EBS volumes"
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect   = "Allow",
+        Action   = [
+          "ec2:AttachVolume",
+          "ec2:CreateSnapshot",
+          "ec2:CreateTags",
+          "ec2:DeleteSnapshot",
+          "ec2:DescribeAvailabilityZones",
+          "ec2:DescribeInstances",
+          "ec2:DescribeSnapshots",
+          "ec2:DescribeTags",
+          "ec2:DescribeVolumes",
+          "ec2:DescribeVolumesModifications",
+          "ec2:DetachVolume"
+        ],
+        Resource = "*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role" "ebs_csi_role" {
+  name               = "EBS_CSI_Driver_Role"
+  assume_role_policy = data.aws_iam_policy_document.ebs_csi_assume_role_policy.json
+}
+
+data "aws_iam_policy_document" "ebs_csi_assume_role_policy" {
+  statement {
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["eks.amazonaws.com"]
+    }
+  }
+}
+
+resource "aws_iam_role_policy_attachment" "attach_ebs_csi_policy" {
+  role       = aws_iam_role.ebs_csi_role.name
+  policy_arn = aws_iam_policy.ebs_csi_policy.arn
+}
+resource "aws_eks_addon" "ebs_csi_driver" {
+  cluster_name    = local.cluster_name    # Replace with your EKS cluster name
+  addon_name      = "aws-ebs-csi-driver"
+  service_account_role_arn = aws_iam_role.ebs_csi_role.arn
+}
