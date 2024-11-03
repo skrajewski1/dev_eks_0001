@@ -109,4 +109,5 @@ resource "aws_eks_addon" "ebs_csi_driver" {
   cluster_name    = local.cluster_name    # Replace with your EKS cluster name
   addon_name      = "aws-ebs-csi-driver"
   service_account_role_arn = aws_iam_role.ebs_csi_role.arn
+  depends_on = [ module.eks ]
 }
