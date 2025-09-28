@@ -7,12 +7,12 @@ This repository helps you provision a cluster in AWS EKS using Terraform
 - IDE like VScode
 - Git
 
-For the kubernetes-cli, open a powershell as the administrator on your workstation.
+For the kubernetes-cli, open a powershell terminal as the administrator on your windows workstation.
 Run the following:
 
 ```
 choco install kubernetes-cli -y
-``
+```
 
 If successful you should get the version with the following command while still on
 powershell as the administrator:
