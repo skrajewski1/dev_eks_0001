@@ -3,7 +3,7 @@ module "eks" {
   version = "18.26.6"
 
   cluster_name    = local.cluster_name
-  cluster_version = "1.30"
+  cluster_version = "1.32"
 
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnets
@@ -65,8 +65,8 @@ resource "aws_iam_policy" "ebs_csi_policy" {
     Version = "2012-10-17",
     Statement = [
       {
-        Effect   = "Allow",
-        Action   = [
+        Effect = "Allow",
+        Action = [
           "ec2:AttachVolume",
           "ec2:CreateSnapshot",
           "ec2:CreateTags",
@@ -106,8 +106,8 @@ resource "aws_iam_role_policy_attachment" "attach_ebs_csi_policy" {
   policy_arn = aws_iam_policy.ebs_csi_policy.arn
 }
 resource "aws_eks_addon" "ebs_csi_driver" {
-  cluster_name    = local.cluster_name    # Replace with your EKS cluster name
-  addon_name      = "aws-ebs-csi-driver"
+  cluster_name             = local.cluster_name # Replace with your EKS cluster name
+  addon_name               = "aws-ebs-csi-driver"
   service_account_role_arn = aws_iam_role.ebs_csi_role.arn
-  depends_on = [ module.eks ]
+  depends_on               = [module.eks]
 }
